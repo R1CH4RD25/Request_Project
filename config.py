@@ -4,9 +4,8 @@ import os
 def get_sqlite_memory_uri():
     pass
 
-
-def get_sqlite_file_url():
-    return f"sqlite:///requests.db"
+def get_sqlite_filedb_uri():
+    return f"sqlite:///../requests.db"
 
 
 def get_postgres_uri():

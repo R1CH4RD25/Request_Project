@@ -5,6 +5,7 @@ from typing import Text
 
 import logging
 import model
+import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -29,8 +30,8 @@ requests = Table(
     Column("activity", String(255)),
     Column("destination", String(255)),
     Column("vehicle_id", ForeignKey("vehicles.id")),
-    Column("req_date", Date),
-    Column("req_time", Date),
+    Column("req_date", String(255)),
+    Column("req_time", String(255)),
 )
 
 approvals = Table(
@@ -44,8 +45,7 @@ approvals = Table(
 )
 
 def start_mappers():
-    logger.info("string mappers")
     # SQLAlchemy 2.0
+    requests_mapper = mapper_registry.map_imperatively(model.Request, requests)
     vehicles_mapper = mapper_registry.map_imperatively(model.Vehicle, vehicles)
-    #requests_mapper = mapper_registry.map_imperatively(model.Request, requests)
-    #approvals_mapper = mapper_registry.map_imperatively(model.Approval, approvals)
+    approvals_mapper = mapper_registry.map_imperatively(model.Approval, approvals)
