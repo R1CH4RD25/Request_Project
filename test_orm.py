@@ -1,5 +1,6 @@
 import model
 import orm
+import pickle
 from datetime import date
 from sqlalchemy import select, delete, insert
 from sqlalchemy.sql import text
@@ -114,6 +115,7 @@ def test_approvals_mapper_can_save_lines(session):
     session.execute(delete(model.Approval))
 
     new_line = model.Approval(1007, "Approved", 1001, 1004, "Drive Safe")
+    print(new_line)
     session.add(new_line)
     session.commit()
 
@@ -164,7 +166,7 @@ def test_assigned_mapper_can_load_lines(session):
             '(5008, 1008, 102, 1005, "03/28/2023", "")'
         )
     )
-
+    
     outcome = session.scalars(select(model.Assigned)).all()    
 
     expected = [
@@ -174,3 +176,5 @@ def test_assigned_mapper_can_load_lines(session):
 
     assert outcome == expected
     session.close()
+
+

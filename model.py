@@ -9,12 +9,16 @@ class VehicleInUse(Exception):
 
 def assign(request: Request, approval: Approval, assignments: List[Assigned]) -> str:
     try:
-        assign = next(b for b in assignments if b.can_assign(request, approval))
-        print(assign)
-        assign.assign(request, approval)
-        return assign.id
+        
+        #assign = next(v for v in assignments if v.can_assign(request, approval))
+        for v in assignments:
+            if v.can_assign(request, approval) == False:
+                return False
+        #assign.assign(request, approval)
+        return True
     except StopIteration:
-        raise VehicleInUse(f"Out of stock for sku {approval.vehicle_id}")
+        return False
+        #raise VehicleInUse(f"Out of stock for sku {approval.vehicle_id}")
 
 @dataclass()
 class Vehicle:
@@ -65,7 +69,8 @@ class Assigned:
     
     def assign(self, request: Request, approval: Approval):
         if self.can_assign(request, approval):
-            self._assignments.add()
+            self._assignments.add(self)
+
 
     def can_assign(self, request:Request, approval:Approval) -> bool:
         return self.app_date != request.req_date or self.vehicle_id != approval.vehicle_id
