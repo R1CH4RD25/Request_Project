@@ -147,6 +147,30 @@ def test_retrieving_requests(session):
         model.Request(1004, "Christy Eli", "UIL Event", "Graford, TX", 101, "03/29/2023", "8:00 PM"),
         model.Request(1006, "Shane Mallory", "District Track", "Bryson, TX", 101, "04/09/2023", "7:00 AM"),
     ]
-    
+
+    assert outcome == expected
+    session.close()
+
+
+
+def test_assigned_mapper_can_load_lines(session):
+    # delete all records first
+    session.execute(delete(model.Assigned))
+
+    session.execute(
+        text(
+            "INSERT INTO assignments (id, request_id, approval_id, vehicle_id, app_date, notes) VALUES "
+            '(5007, 1007, 101, 1004, "03/25/2023", "Drive Safe"),'
+            '(5008, 1008, 102, 1005, "03/28/2023", "")'
+        )
+    )
+
+    outcome = session.scalars(select(model.Assigned)).all()    
+
+    expected = [
+        model.Assigned(5007, 1007, 101, 1004, "03/25/2023", "Drive Safe"),
+        model.Assigned(5008, 1008, 102, 1005, "03/28/2023", ""),
+    ]
+
     assert outcome == expected
     session.close()

@@ -44,8 +44,20 @@ approvals = Table(
     Column("notes", String()),
 )
 
+assignments = Table(
+    "assignments",
+    mapper_registry.metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("request_id", ForeignKey("requests.id")),
+    Column("approval_id", ForeignKey("approvals.id")),
+    Column("vehicle_id", ForeignKey("vehicles.id")),
+    Column("app_date", String(255)),
+    Column("notes", String()),
+)
+
 def start_mappers():
     # SQLAlchemy 2.0
     requests_mapper = mapper_registry.map_imperatively(model.Request, requests)
     vehicles_mapper = mapper_registry.map_imperatively(model.Vehicle, vehicles)
     approvals_mapper = mapper_registry.map_imperatively(model.Approval, approvals)
+    assigned_mapper = mapper_registry.map_imperatively(model.Assigned, assignments)
