@@ -60,4 +60,14 @@ def start_mappers():
     requests_mapper = mapper_registry.map_imperatively(model.Request, requests)
     vehicles_mapper = mapper_registry.map_imperatively(model.Vehicle, vehicles)
     approvals_mapper = mapper_registry.map_imperatively(model.Approval, approvals)
-    assigned_mapper = mapper_registry.map_imperatively(model.Assigned, assignments)
+    #assigned_mapper = mapper_registry.map_imperatively(model.Assigned, assignments)
+    mapper_registry.map_imperatively(
+        model.Assigned, 
+        assignments,
+        properties={
+            "_assignments": relationship(
+            requests_mapper,
+            collection_class=set,
+            )
+        },
+    )

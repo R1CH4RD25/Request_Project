@@ -82,5 +82,25 @@ def test_repository_can_retrieve_request_with_approval(session):
 
     expected = model.Request(1004, "Christy Eli", "UIL Event", "Graford, TX", 101, "03/29/2023", "8:00 PM")
 
+    session.commit()
+    
     assert expected == reqretrieved
     assert appretrieved.request_id == reqretrieved.id
+
+
+def test_repository_can_save_an_assignment(session):
+    # delete all records first
+    session.execute(delete(model.Assigned))
+    assigned = model.Assigned(5000, 1005, 2550, 102, "04/06/2023", "Notes")
+    
+
+    repo = repository.SqlAlchemyAssignedRepository(session)
+    repo.add(assigned)
+    session.commit()
+
+    rows = session.execute(
+        text('SELECT id,  request_id, approval_id, vehicle_id, app_date, notes FROM "assignments"')
+    )
+    assert list(rows) == [(5000, 1005, 2550, 102, "04/06/2023", "Notes")]
+
+    session.commit()

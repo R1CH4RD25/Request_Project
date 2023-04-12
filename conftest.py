@@ -10,9 +10,9 @@ from sqlalchemy.sql import delete, insert, select, text
 from sqlalchemy.orm import sessionmaker, clear_mappers
 
 import config
-#from flask_app import create_app
-from model import Vehicle
-from orm import mapper_registry, start_mappers, vehicles
+from flask_app import create_app
+from model import Assigned
+from orm import mapper_registry, start_mappers, assignments
 
 pytest.register_assert_rewrite("tests.e2e.api_client")
 
@@ -47,3 +47,46 @@ def postgres_session_factory(postgres_db):
 def postgres_session(postgres_session_factory):
     return postgres_session_factory()
 
+@pytest.fixture
+def flask_api(session):
+    app = create_app()
+    app.config.update({"TESTING": True})
+    return app
+
+@pytest.fixture
+def test_client(flask_api):
+    return flask_api.test_client()
+
+@pytest.fixture
+def add_assigned(session):
+    # take care and note that this fixture takes care of adding in records to the database.
+    assignments_added = set()
+    requests_added = set()
+
+    def _add_assigned(assigned):
+        #print(assigned)
+        for id, request_id, approval_id, vehicle_id, app_date, notes in assigned:
+            session.execute(
+                insert(assignments).values(
+                    id=id, request_id=request_id, approval_id=approval_id, vehicle_id=vehicle_id, app_date=app_date, notes=notes
+                )
+            )
+            assign_id = session.scalars(
+                select(Assigned).where(Assigned.id == id).where(Assigned.request_id == request_id)
+            ).first()
+            #print(assign_id.id)
+            #print(assign_id.request_id)
+            assignments_added.add(assign_id.id)
+            requests_added.add(assign_id.request_id)
+        session.commit()
+        session.close()
+
+    yield _add_assigned
+
+    for assign_id in assignments_added:
+        session.execute(
+            text("DELETE FROM assignments WHERE id=:assign_id"),
+            dict(assign_id=assign_id),
+        )
+    
+    session.commit()

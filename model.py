@@ -8,21 +8,27 @@ class VehicleInUse(Exception):
 
 
 def assign(request: Request, approval: Approval, assignments: List[Assigned]) -> str:
-    try:
-        assign = next(b for b in assignments if b.can_assign(request, approval))
-        print(assign)
-        assign.assign(request, approval)
-        return assign.id
-    except StopIteration:
-        raise VehicleInUse(f"Out of stock for sku {approval.vehicle_id}")
 
-@dataclass()
+    try:
+        for assign in assignments:
+            #print(assign.assign(request, approval))
+            #print(approval.vehicle_id, assign.vehicle_id)            
+            #print(approval.request_id, request.id)
+            #print(request.req_date, assign.app_date)
+            if assign.assign(request, approval) == False:
+                return False
+        return assign.id + 1
+    except StopIteration:
+        return False
+       
+
+@dataclass(unsafe_hash=True)
 class Vehicle:
     id: int
     name: str
     notes: str
 
-@dataclass()
+@dataclass(unsafe_hash=True)
 class Request:
     id: int
     requestor: str
@@ -32,7 +38,7 @@ class Request:
     req_date: datetime
     req_time: datetime
   
-@dataclass()
+@dataclass(unsafe_hash=True)
 class Approval:
      id: int
      status: str
@@ -43,7 +49,6 @@ class Approval:
 
 #@dataclass()
 class Assigned:
-
     def __init__(self, id: int, request_id: int, approval_id: int, vehicle_id: int, app_date: datetime, notes: Optional[str]):
         self.id = id
         self.request_id = request_id
@@ -64,8 +69,11 @@ class Assigned:
         return self.id == other.id and self.request_id == other.request_id
     
     def assign(self, request: Request, approval: Approval):
-        if self.can_assign(request, approval):
-            self._assignments.add()
+        if self.can_assign(request, approval) == True:
+            print(request)
+            self._assignments.add(request)
+        else:  
+            return False
 
     def can_assign(self, request:Request, approval:Approval) -> bool:
-        return self.app_date != request.req_date or self.vehicle_id != approval.vehicle_id
+        return approval.request_id == request.id and self.app_date != request.req_date or self.vehicle_id != approval.vehicle_id

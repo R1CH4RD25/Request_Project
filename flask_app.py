@@ -13,24 +13,39 @@ def index_endpoint():
     return "<p>HELLO FROM THE API</p>"
 
 
-def assign_endpoint():
+def assignments_endpoint():
     clear_mappers()
     orm.start_mappers()
     get_session = sessionmaker(bind=create_engine(config.get_sqlite_filedb_uri()))
     session = get_session()
-    repo = repository.SqlAlchemyRequestRepository(session)
-    vehicle = model.Vehicle(
+    repo = repository.SqlAlchemyAssignedRepository(session)
+    requests = model.Request(
         request.json["id"],
-        request.json["name"],
-        request.json["notes"],
+        request.json["requestor"],
+        request.json["activity"],
+        request.json["destination"],
+        request.json["vehicle_id"],
+        request.json["req_date"],
+        request.json["req_time"],
     )
 
+    if requests.vehicle_id == 100:
+        approval = model.Approval(1007, "Approved", 101, requests.id, "Drive Safe")
+    else:
+        requests.vehicle_id = 100
+        approval = model.Approval(1007, "Approved", 100, requests.id, "Drive Safe")
+    
     try:
-        batchref = services.allocate(vehicle, repo, session)
+        assignid = services.assign(requests, approval, repo, session)
+
+        if assignid != False:
+            return {"assignid": assignid}, 201
+        else:
+             return {"message": "Error - Cannot Assign Vehicle"}, 400
     except (model.VehicleInUse, services.InvalidVehicle) as e:
         return {"message": str(e)}, 400
 
-    return {"batchref": batchref}, 201
+    
 
 
 def create_app():
@@ -39,7 +54,7 @@ def create_app():
 
     app.add_url_rule("/", "index", view_func=index_endpoint)
     app.add_url_rule(
-        "/allocate", "allocate", view_func=allocate_endpoint, methods=["POST"]
+        "/assignments", "assignments", view_func=assignments_endpoint, methods=["POST"]
     )
 
     return app

@@ -55,3 +55,29 @@ class SqlAlchemyApprovalRepository(AbstractApprovalRepository):
 
     def list(self):
         return self.session.scalars(select(model.Approval)).all()
+    
+
+class AbstractAssignedRepository(abc.ABC):
+    @abc.abstractmethod
+    def add(self, assigned: model.Assigned):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get(self, id) -> model.Assigned:
+        raise NotImplementedError
+
+
+class SqlAlchemyAssignedRepository(AbstractAssignedRepository):
+    def __init__(self, session):
+        self.session = session
+
+    def add(self, assigned):
+        self.session.add(assigned)
+
+    def get(self, id):
+        return self.session.scalars(
+            select(model.Assigned).filter_by(id=id)
+        ).one()
+
+    def list(self):
+        return self.session.scalars(select(model.Assigned)).all()
