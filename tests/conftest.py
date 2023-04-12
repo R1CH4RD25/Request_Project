@@ -9,10 +9,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.sql import delete, insert, select, text
 from sqlalchemy.orm import sessionmaker, clear_mappers
 
-import config
-from flask_app import create_app
-from model import Assigned
-from orm import mapper_registry, start_mappers, assignments
+import request.config as config
+from request.entrypoints.flask_app import create_app
+from request.domain.model import Assigned
+from request.adapters.orm import mapper_registry, start_mappers, assignments
 
 pytest.register_assert_rewrite("tests.e2e.api_client")
 

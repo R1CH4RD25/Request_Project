@@ -1,6 +1,6 @@
 from datetime import date
 
-import model
+import request.domain.model as model
 
 
 

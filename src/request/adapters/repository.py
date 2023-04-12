@@ -1,5 +1,5 @@
 import abc
-import model
+import request.domain.model as model
 
 from sqlalchemy import select
 

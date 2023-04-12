@@ -2,11 +2,11 @@ from flask import Flask, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, clear_mappers
 
-import config
-import model
-import orm
-import repository
-import services
+import request.config as config
+import request.domain.model as model
+import request.adapters.orm as orm
+import request.adapters.repository as repository
+import request.service_layer.services as services
 
 
 def index_endpoint():

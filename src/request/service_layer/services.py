@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import model
-from model import Vehicle
-from repository import AbstractAssignedRepository, SqlAlchemyAssignedRepository
+import request.domain.model as model
+from request.domain.model import Vehicle
+from request.adapters.repository import AbstractAssignedRepository, SqlAlchemyAssignedRepository
 
 
 class InvalidVehicle(Exception):

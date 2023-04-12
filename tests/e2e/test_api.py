@@ -1,7 +1,7 @@
 import random
 import pytest
 import requests
-import config
+import request.config as config
 
 from datetime import datetime
 

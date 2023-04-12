@@ -1,5 +1,5 @@
-import model
-import orm
+import request.domain.model as model
+import request.adapters.orm as orm
 import pickle
 from datetime import date
 from sqlalchemy import select, delete, insert

@@ -4,7 +4,7 @@ from sqlalchemy.orm import registry, relationship
 from typing import Text
 
 import logging
-import model
+import request.domain.model as model
 import datetime
 
 logger = logging.getLogger(__name__)
