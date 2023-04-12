@@ -19,9 +19,10 @@ def test_can_vehicle_be_assigned():
     request, approval = make_requests(1006, 101, "03/29/2023")
 
     assert assigned.can_assign(request, approval) == True
+    assert assigned.can_assign(request, approval) == True
 
-def test_returns_assigned_id():
-    assign1 = model.Assigned(9997, 1004, 1006, 101, "03/28/2023", "")
+def test_can_vehicle_be_assigned_with_multiple_already_assigned():
+    assign1 = model.Assigned(9999, 1004, 1007, 101, "03/23/2023", "")
     assign2 = model.Assigned(9998, 1005, 1007, 100, "03/29/2023", "")
     assign3 = model.Assigned(9999, 1003, 1008, 102, "03/30/2023", "")
     
