@@ -25,13 +25,12 @@ class FakeSession:
         self.committed = True
 
 
-def test_returns_allocation():
+def test_returns_assigned():
     last_id = 5007
     req = model.Request(1005, "Richard Sullivan", "Golf", "Archer City", 102, "04/06/2023", "6:30 AM")
     appr = model.Approval(1007, "Approved", 1001, 1004, "Drive Safe")
     assign = model.Assigned(last_id, 1007, 101, 1004, "03/25/2023", "Drive Safe")
     repo = FakeRepository([assign])
-    session = FakeSession()
 
     result = services.assign(req, appr, repo, FakeSession())
     #services.assign(req, repo, FakeSession())
