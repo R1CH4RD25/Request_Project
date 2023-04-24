@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.sql import delete, insert, select, text
 from request.domain import model
-from request.adapters.orm import allocations, requests
+from request.adapters.orm import assignments, requests
 from request.service_layer import unit_of_work
 
 def insert_request(session, id, requestor, activity, destination, vehicle_id, req_date,req_time):
